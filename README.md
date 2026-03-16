@@ -227,7 +227,7 @@ Este proyecto es para fines educativos - Universidad Mariano Gálvez
 
 ## 👥 Autores
 
-- Equipo UMG - Desarrollo de Software
+- Ricardo Brenes
 
 ---
 
