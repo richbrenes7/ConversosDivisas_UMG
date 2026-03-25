@@ -2,45 +2,68 @@ import React, { useState, useEffect } from 'react';
 import { convertCurrency, getSupportedCurrencies } from '../services/api';
 import './CurrencyConverter.css';
 
+/**
+ * 💱 Componente Principal del Conversor de Divisas
+ * 
+ * Este es el corazón de nuestra aplicación. Aquí manejamos:
+ * - La entrada del usuario (cantidad y monedas)
+ * - La comunicación con el backend para obtener las conversiones
+ * - La visualización de los resultados
+ * 
+ * Todo está pensado para ser intuitivo y fácil de usar.
+ */
 function CurrencyConverter() {
-  // Estados
-  const [amount, setAmount] = useState('100');
-  const [fromCurrency, setFromCurrency] = useState('USD');
-  const [toCurrency, setToCurrency] = useState('GTQ');
-  const [result, setResult] = useState(null);
-  const [currencies, setCurrencies] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  // 📦 Estados de la aplicación - Aquí guardamos toda la información mientras la app está corriendo
+  const [amount, setAmount] = useState('100');  // El monto que el usuario quiere convertir
+  const [fromCurrency, setFromCurrency] = useState('USD');  // De qué moneda convertimos
+  const [toCurrency, setToCurrency] = useState('GTQ');  // A qué moneda convertimos
+  const [result, setResult] = useState(null);  // El resultado de la conversión
+  const [currencies, setCurrencies] = useState([]);  // Lista de todas las monedas disponibles
+  const [loading, setLoading] = useState(false);  // ¿Estamos procesando una conversión?
+  const [error, setError] = useState('');  // Mensaje de error si algo sale mal
 
-  // Cargar monedas al montar el componente
+  // 🎬 Cuando el componente se monta por primera vez, cargamos las monedas disponibles
   useEffect(() => {
     loadCurrencies();
   }, []);
 
+  /**
+   * Carga las monedas disponibles desde el backend
+   * 
+   * Esta función se ejecuta una sola vez al inicio para obtener
+   * todas las monedas que el usuario puede seleccionar.
+   */
   const loadCurrencies = async () => {
     try {
       const data = await getSupportedCurrencies();
       setCurrencies(data);
     } catch (err) {
-      console.error('Error loading currencies:', err);
-      setError('No se pudieron cargar las monedas');
+      console.error('Error al cargar monedas:', err);
+      setError('No se pudieron cargar las monedas, intenta recargar la página');
     }
   };
 
+  /**
+   * 🔄 Maneja la conversión cuando el usuario presiona el botón
+   * 
+   * Valida los datos ingresados, se comunica con el backend,
+   * y muestra el resultado o un mensaje de error si algo falla.
+   */
   const handleConvert = async (e) => {
     e.preventDefault();
     
-    // Validaciones
+    // ✅ Primero validamos que todo esté correcto antes de enviar la petición
     if (!amount || parseFloat(amount) <= 0) {
-      setError('Por favor ingresa un monto válido');
+      setError('Por favor ingresa un monto válido mayor a 0');
       return;
     }
 
     if (fromCurrency === toCurrency) {
-      setError('Por favor selecciona monedas diferentes');
+      setError('No tiene sentido convertir de una moneda a sí misma. Elige monedas diferentes 😊');
       return;
     }
 
+    // 🚀 Todo bien, procedemos con la conversión
     setLoading(true);
     setError('');
     setResult(null);
@@ -49,25 +72,37 @@ function CurrencyConverter() {
       const data = await convertCurrency(amount, fromCurrency, toCurrency);
       setResult(data);
     } catch (err) {
-      setError(err.message || 'Error al convertir. Por favor intenta nuevamente.');
+      setError(err.message || 'Ups, algo salió mal. Por favor intenta nuevamente.');
     } finally {
-      setLoading(false);
+      setLoading(false);  // Ya terminamos, quitar el indicador de carga
     }
   };
 
+  /**
+   * 🔄 Intercambia las monedas (de ↔ a)
+   * 
+   * Función útil para cuando quieres hacer la conversión inversa.
+   * Por ejemplo, si estabas convirtiendo USD -> GTQ, te cambia a GTQ -> USD.
+   */
   const handleSwapCurrencies = () => {
     setFromCurrency(toCurrency);
     setToCurrency(fromCurrency);
-    setResult(null);
+    setResult(null);  // Limpiamos el resultado anterior
   };
 
+  /**
+   * ✍️ Valida y actualiza el monto mientras el usuario escribe
+   * 
+   * Solo permitimos números y un punto decimal (máximo 2 decimales).
+   * Esto evita que el usuario ingrese letras o valores inválidos.
+   */
   const handleAmountChange = (e) => {
     const value = e.target.value;
-    // Permitir solo números y un punto decimal
+    // Esta expresión regular permite: números, un punto, y máximo 2 decimales
     if (value === '' || /^\d*\.?\d{0,2}$/.test(value)) {
       setAmount(value);
-      setResult(null);
-      setError('');
+      setResult(null);  // Limpiamos el resultado anterior
+      setError('');  // Limpiamos cualquier error
     }
   };
 

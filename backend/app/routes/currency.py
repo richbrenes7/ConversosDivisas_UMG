@@ -1,6 +1,9 @@
 """
-Currency Routes - Endpoints para conversión de divisas
-Implementa rate limiting y validación
+💱 Rutas de Conversión de Divisas
+
+Aquí están todos los endpoints (puntos de acceso) para convertir divisas.
+Implementamos límites de velocidad para evitar sobrecargar el servicio,
+y validamos cada dato que nos envías para garantizar resultados precisos.
 """
 
 from fastapi import APIRouter, HTTPException, Request, Depends
@@ -18,14 +21,15 @@ from app.models import (
 from app.services.exchange_rate import ExchangeRateService
 from app.utils.validators import validate_currency_code
 
-# Crear router
+# Creamos el enrutador que agrupa todos los endpoints de divisas
 router = APIRouter()
 
-# Configurar rate limiter
+# Configuramos cuántas peticiones puede hacer un usuario por minuto
+# Esto protege nuestro servicio de abusos y mantiene la calidad para todos
 limiter = Limiter(key_func=get_remote_address)
 rate_limit = os.getenv("RATE_LIMIT_PER_MINUTE", "60")
 
-# Instanciar servicio
+# Inicializamos el servicio que se encarga de consultar las tasas de cambio
 exchange_service = ExchangeRateService()
 
 
@@ -44,14 +48,19 @@ async def convert_currency(
     conversion: ConversionRequest
 ):
     """
-    Convierte un monto de una moneda a otra
+    🔄 Convierte dinero de una moneda a otra
 
-    - **amount**: Monto a convertir (debe ser positivo)
-    - **from_currency**: Código ISO 4217 de moneda origen (ej: USD)
-    - **to_currency**: Código ISO 4217 de moneda destino (ej: EUR)
+    Este es el corazón del conversor. Le das un monto y dos monedas,
+    y te devolvemos cuánto vale ese dinero en la otra moneda.
+
+    - **amount**: Cuánto dinero quieres convertir (debe ser más de 0)
+    - **from_currency**: De qué moneda (ej: USD para dólares)
+    - **to_currency**: A qué moneda (ej: EUR para euros)
+
+    Ejemplo: Si conviertes 100 USD a EUR, te diremos cuántos euros son.
     """
     try:
-        # Validar códigos de moneda
+        # Primero verificamos que los códigos de moneda sean válidos
         if not validate_currency_code(conversion.from_currency):
             raise HTTPException(
                 status_code=400,
@@ -64,7 +73,7 @@ async def convert_currency(
                 detail=f"Invalid currency code: {conversion.to_currency}"
             )
         
-        # Realizar conversión
+        # Realizamos la conversión consultando las tasas de cambio actuales
         result = await exchange_service.convert(
             amount=conversion.amount,
             from_currency=conversion.from_currency,
@@ -76,9 +85,10 @@ async def convert_currency(
     except HTTPException:
         raise
     except Exception as e:
+        # Si algo sale mal, devolvemos un mensaje genérico para no exponer detalles internos
         raise HTTPException(
             status_code=500,
-            detail="An error occurred during conversion"
+            detail="Ups, algo salió mal al convertir. Por favor intenta de nuevo."
         )
 
 
@@ -97,13 +107,18 @@ async def get_exchange_rate(
     to_currency: str
 ):
     """
-    Obtiene la tasa de cambio entre dos monedas
+    📊 Consulta la tasa de cambio entre dos monedas
 
-    - **from**: Código ISO 4217 de moneda origen
-    - **to**: Código ISO 4217 de moneda destino
+    Si solo quieres saber a cómo está el cambio entre dos monedas
+    sin convertir una cantidad específica, este es tu endpoint.
+
+    - **from**: La moneda base (ej: USD)
+    - **to**: La moneda que quieres comparar (ej: MXN)
+
+    Ejemplo: Si consultas USD a MXN, te diré cuántos pesos vale 1 dólar.
     """
     try:
-        # Normalizar y validar
+        # Convertimos las monedas a mayúsculas y validamos que existan
         from_currency = from_currency.upper()
         to_currency = to_currency.upper()
         

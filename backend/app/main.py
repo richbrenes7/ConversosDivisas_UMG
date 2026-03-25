@@ -1,6 +1,12 @@
 """
-FastAPI Application - Conversor de Divisas
-Implementa mejores prácticas de seguridad y arquitectura
+🏦 Aplicación FastAPI - Conversor de Divisas UMG
+
+Esta es la aplicación principal del conversor de divisas.
+Implementamos las mejores prácticas de seguridad para proteger tu información
+y ofrecerte un servicio confiable y rápido.
+
+Autor: Universidad Mariano Gálvez
+Versión: 1.0.0
 """
 
 from fastapi import FastAPI, Request
@@ -13,10 +19,11 @@ import os
 
 from app.routes import currency
 
-# Configurar rate limiter
+# Configuramos el limitador de peticiones para evitar abuso del servicio
+# Esto protege nuestra API de recibir demasiadas solicitudes de un mismo usuario
 limiter = Limiter(key_func=get_remote_address)
 
-# Crear aplicación FastAPI
+# Creamos nuestra aplicación principal con toda su configuración
 app = FastAPI(
     title="Conversor de Divisas API",
     description="API REST para conversión de divisas con mejores prácticas de seguridad",
@@ -25,11 +32,12 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Configurar rate limiter en la app
+# Conectamos el limitador de peticiones con nuestra app
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Configurar CORS
+# Configuramos CORS para permitir que nuestro frontend se comunique con el backend
+# CORS = Compartir recursos entre diferentes dominios de forma segura
 origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
 
 app.add_middleware(
@@ -40,14 +48,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Incluir routers
+# Incluimos todas las rutas relacionadas con conversión de divisas
 app.include_router(currency.router, prefix="/api", tags=["Currency"])
 
 
-# Health check endpoint
+# Endpoint para verificar que el servicio está funcionando correctamente
 @app.get("/health", tags=["Health"])
 async def health_check():
-    """Health check endpoint para monitoring"""
+    """
+    Verifica el estado del servicio
+    
+    Este endpoint lo usamos para monitorear que todo está funcionando bien.
+    Es como tomarle el pulso a nuestra aplicación ❤️
+    """
     return {
         "status": "healthy",
         "service": "conversor-divisas-api",
@@ -55,10 +68,15 @@ async def health_check():
     }
 
 
-# Root endpoint
+# Página principal de la API - aquí damos la bienvenida
 @app.get("/", tags=["Root"])
 async def root():
-    """Endpoint raíz con información de la API"""
+    """
+    Página de inicio de la API
+    
+    Aquí te damos la bienvenida y te mostramos información básica
+    sobre cómo usar nuestra API de conversión de divisas.
+    """
     return {
         "message": "Conversor de Divisas API",
         "version": "1.0.0",
@@ -67,10 +85,16 @@ async def root():
     }
 
 
-# Manejo global de errores
+# Capturamos cualquier error inesperado para manejarlo de forma segura
+# Nunca mostramos detalles técnicos que puedan comprometer la seguridad
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """Manejador global de excepciones para no exponer errores internos"""
+    """
+    Manejador de errores globales
+    
+    Si algo sale mal, atrapamos el error aquí para darte un mensaje
+    amigable sin exponer detalles internos del sistema.
+    """
     return JSONResponse(
         status_code=500,
         content={
