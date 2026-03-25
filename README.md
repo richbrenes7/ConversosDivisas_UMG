@@ -2,35 +2,82 @@
 
 Aplicación web full-stack para conversión de divisas en tiempo real con arquitectura moderna y mejores prácticas de seguridad.
 
+## 📚 Documentación
+
+- [CICD_EXPLICACION.md](CICD_EXPLICACION.md) - Explicación completa del flujo CI/CD, webhooks y despliegue automático
+- [DEPLOYMENT.md](DEPLOYMENT.md) - Guía paso a paso para desplegar en Render y Netlify
+
 ## 🏗️ Arquitectura
 
 - **Backend**: Python FastAPI con validación y rate limiting
 - **Frontend**: React con diseño moderno y responsivo
 - **Containerización**: Docker & Docker Compose
 - **API Externa**: ExchangeRate-API para tasas de cambio en tiempo real
+- **Deployment**: Render (backend) + Netlify (frontend) con CI/CD automático
+
+## 🛠️ Stack Tecnológico
+
+**Backend**:
+- FastAPI 0.115.0
+- Python 3.11.0
+- Pydantic 2.9.2 (validación de datos)
+- Uvicorn 0.32.0 (ASGI server)
+- slowapi (rate limiting)
+- httpx (cliente HTTP async)
+
+**Frontend**:
+- React 18.2.0
+- Node.js 24.14.0
+- Axios 1.6.5 (cliente HTTP)
+- CSS moderno (variables CSS, flexbox, animations)
+
+**DevOps & Deployment**:
+- Docker & Docker Compose
+- Render (backend PaaS)
+- Netlify (frontend CDN/hosting)
+- GitHub (control de versiones + webhooks CI/CD)
 
 ## 📋 Características
 
-✅ Conversión de divisas en tiempo real  
-✅ Soporte para múltiples monedas (USD, EUR, GTQ, MXN, etc.)  
-✅ Validación de entrada robusta  
-✅ Rate limiting para prevenir abuso  
-✅ CORS configurado correctamente  
-✅ Manejo de errores completo  
-✅ Diseño responsivo moderno  
-✅ Containerizado con Docker  
-✅ Hot reload en desarrollo  
-✅ Health checks  
+- Conversión de divisas en tiempo real  
+- Soporte para múltiples monedas (USD, EUR, GTQ, MXN, y más)  
+- Validación de entrada robusta  
+- Rate limiting para prevenir abuso  
+- CORS configurado correctamente  
+- Manejo de errores completo  
+- Diseño responsivo moderno  
+- Containerizado con Docker  
+- Hot reload en desarrollo  
+- Health checks automatizados  
 
 ## 🔒 Seguridad
 
-- ✅ Validación de entrada en backend y frontend
-- ✅ Rate limiting (60 requests/minuto por defecto)
-- ✅ CORS configurado
-- ✅ Variables de entorno para secrets
-- ✅ Sanitización de datos
-- ✅ Headers de seguridad
-- ✅ Sin exposición de errores internos
+- Validación de entrada en backend y frontend
+- Rate limiting (60 requests/minuto por defecto)
+- CORS configurado adecuadamente
+- Variables de entorno para secrets
+- Sanitización de datos
+- Headers de seguridad
+- Sin exposición de errores internos
+
+## 🔀 Workflow y CI/CD
+
+**Estrategia de Branching**:
+- `main` - Rama de producción (protegida)
+- `dev` - Rama de desarrollo (staging)
+
+**Integración Continua**:
+- Los cambios se prueban localmente antes de push
+- Pull requests hacia `dev` para revisión de código
+- Merge a `main` solo después de testing en `dev`
+
+**Despliegue Continuo**:
+- Push a `main` → Deploy automático a producción
+- Render detecta cambios via webhook y redeploya el backend
+- Netlify detecta cambios via webhook y redeploya el frontend
+- Tiempo de deploy: 2-3 minutos
+
+Ver [CICD_EXPLICACION.md](CICD_EXPLICACION.md) para detalles técnicos del flujo completo.
 
 ## 🚀 Inicio Rápido
 
@@ -166,15 +213,11 @@ GET /api/currencies
 GET /api/exchange-rate?from=USD&to=EUR
 ```
 
-## 🎨 Frontend
+### Documentación Interactiva
 
-El frontend está construido con:
-- React 18
-- Axios para peticiones HTTP
-- CSS moderno con gradientes y animaciones
-- Diseño responsivo mobile-first
-- Validación de formularios
-- Manejo de errores amigable
+En desarrollo local:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
 ## 🐛 Troubleshooting
 
@@ -212,24 +255,25 @@ environment:
 2. Crea una rama feature: `git checkout -b feature/nueva-funcionalidad`
 3. Commit cambios: `git commit -am 'Agrega nueva funcionalidad'`
 4. Push a la rama: `git push origin feature/nueva-funcionalidad`
-5. Crea un Pull Request a la rama `dev`
+5. Crea un Pull Request hacia la rama `dev`
 
-## 📝 Notas
+## 📝 Notas Importantes
 
-- La API usa ExchangeRate-API con el plan gratuito (1500 requests/mes)
-- Para producción, obtener API key en: https://www.exchangerate-api.com/
-- El rate limiting está configurado para desarrollo, ajustar para producción
-- Las tasas de cambio se cachean por 1 hora para reducir llamadas a la API
+- La API externa usa ExchangeRate-API con el plan gratuito (1500 requests/mes)
+- Para producción se recomienda obtener una API key personalizada
+- El rate limiting está configurado de forma conservadora, ajustar según necesidad
+- Las tasas de cambio pueden tener un pequeño delay de caché para optimizar rendimiento
+- Las variables de entorno deben configurarse correctamente antes del despliegue
 
 ## 📄 Licencia
 
-Este proyecto es para fines educativos - Universidad Mariano Gálvez
+Este proyecto es para fines educativos - Universidad Mariano Gálvez de Guatemala
 
-## 👥 Autores
+## Autor
 
-- Ricardo Brenes
+**Ricardo Brenes**  
+GitHub: [@richbrenes7](https://github.com/richbrenes7)
 
 ---
 
-**¿Problemas?** Abre un issue en GitHub  
-**¿Preguntas?** Contacta al equipo de desarrollo
+Para más información sobre despliegue y CI/CD, consulta la documentación en [CICD_EXPLICACION.md](CICD_EXPLICACION.md) y [DEPLOYMENT.md](DEPLOYMENT.md).
