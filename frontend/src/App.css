@@ -1,15 +1,31 @@
+/* 🎨 Tema: Jade Pebble Morning - Diseño Minimalista */
+
+:root {
+  --jade-primary: #7B9669;
+  --jade-light: #E6E6E6;
+  --jade-sage: #BAC8B1;
+  --jade-teal: #6C8480;
+  --jade-dark: #404E3B;
+  --jade-bg: #F5F7F4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .App {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--jade-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
 }
 
 .app-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;
   min-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -18,20 +34,24 @@
 
 .app-header {
   text-align: center;
-  color: white;
-  margin-bottom: 30px;
-  animation: fadeInDown 0.8s ease-out;
+  color: var(--jade-dark);
+  margin-bottom: 40px;
+  animation: fadeInDown 0.6s ease-out;
 }
 
 .app-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: 2rem;
+  font-weight: 300;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+  color: var(--jade-dark);
 }
 
 .app-header p {
-  font-size: 1.1rem;
-  opacity: 0.9;
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--jade-teal);
+  letter-spacing: 0.3px;
 }
 
 .app-main {
@@ -43,21 +63,23 @@
 
 .app-footer {
   text-align: center;
-  color: white;
-  margin-top: 30px;
+  color: var(--jade-teal);
+  margin-top: 40px;
+  font-size: 0.85rem;
+  font-weight: 300;
   opacity: 0.8;
-  font-size: 0.9rem;
 }
 
 .app-footer p {
-  margin: 5px 0;
+  margin: 4px 0;
+  letter-spacing: 0.2px;
 }
 
-/* Animations */
+/* Animaciones suaves */
 @keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translateY(-30px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -68,7 +90,7 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -79,10 +101,14 @@
 /* Responsive */
 @media (max-width: 768px) {
   .app-header h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
   
   .app-header p {
-    font-size: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .app-container {
+    max-width: 100%;
   }
 }

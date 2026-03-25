@@ -1,58 +1,63 @@
+/* 🎨 Conversor Minimalista - Jade Pebble Morning */
+
 .converter-container {
   width: 100%;
-  animation: fadeInUp 0.8s ease-out;
+  animation: fadeInUp 0.6s ease-out;
 }
 
 .converter-card {
   background: white;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease;
-}
-
-.converter-card:hover {
-  transform: translateY(-5px);
+  border-radius: 16px;
+  padding: 40px 35px;
+  box-shadow: 0 2px 20px rgba(64, 78, 59, 0.08);
+  border: 1px solid var(--jade-light);
 }
 
 .card-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 35px;
 }
 
 .currency-icon {
-  font-size: 3rem;
-  margin-bottom: 10px;
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  opacity: 0.9;
 }
 
 .card-header h2 {
-  color: #333;
-  font-size: 1.8rem;
-  margin-bottom: 5px;
+  color: var(--jade-dark);
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-bottom: 6px;
+  letter-spacing: -0.3px;
 }
 
 .card-header p {
-  color: #666;
-  font-size: 0.9rem;
+  color: var(--jade-teal);
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.2px;
 }
 
-/* Form Styles */
+/* Formulario minimalista */
 .converter-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .form-group label {
-  color: #555;
-  font-weight: 600;
-  font-size: 0.9rem;
+  color: var(--jade-dark);
+  font-weight: 400;
+  font-size: 0.85rem;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 .input-wrapper {
@@ -61,63 +66,67 @@
 
 .amount-input {
   width: 100%;
-  padding: 15px 20px;
-  font-size: 1.2rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  font-weight: 600;
+  padding: 16px 18px;
+  font-size: 1.3rem;
+  border: 1.5px solid var(--jade-sage);
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  font-weight: 300;
+  background: white;
+  color: var(--jade-dark);
 }
 
 .amount-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--jade-primary);
+  background: #FAFBFA;
 }
 
 .currency-select {
   width: 100%;
-  padding: 15px 20px;
+  padding: 16px 18px;
   font-size: 1rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border: 1.5px solid var(--jade-sage);
+  border-radius: 8px;
   background: white;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  color: var(--jade-dark);
+  font-weight: 300;
 }
 
 .currency-select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--jade-primary);
+  background: #FAFBFA;
 }
 
-/* Swap Button */
+/* Botón de intercambio minimalista */
 .swap-button-container {
   display: flex;
   justify-content: center;
-  margin: -10px 0;
+  margin: -8px 0;
 }
 
 .swap-button {
-  width: 50px;
-  height: 50px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--jade-sage);
   border: none;
-  color: white;
-  font-size: 1.5rem;
+  color: var(--jade-dark);
+  font-size: 1.3rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .swap-button:hover {
-  transform: rotate(180deg) scale(1.1);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+  background: var(--jade-primary);
+  color: white;
+  transform: rotate(180deg);
 }
 
 .swap-button:active {
@@ -128,36 +137,36 @@
   display: block;
 }
 
-/* Convert Button */
+/* Botón de conversión minimalista */
 .convert-button {
   width: 100%;
-  padding: 18px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 16px;
+  font-size: 1rem;
+  font-weight: 400;
+  background: var(--jade-primary);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 8px;
+  letter-spacing: 0.3px;
 }
 
 .convert-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  background: var(--jade-dark);
 }
 
 .convert-button:active:not(:disabled) {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 .convert-button:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
@@ -165,14 +174,14 @@
   animation: pulse 1.5s ease-in-out infinite;
 }
 
-/* Spinner */
+/* Spinner minimalista */
 .spinner {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.7s linear infinite;
 }
 
 @keyframes spin {
@@ -186,57 +195,60 @@
     opacity: 1;
   }
   50% {
-    opacity: 0.8;
+    opacity: 0.85;
   }
 }
 
-/* Error Message */
+/* Mensaje de error minimalista */
 .error-message {
-  background: #fee;
-  border: 2px solid #fcc;
-  border-radius: 12px;
-  padding: 15px;
-  color: #c33;
+  background: #FFF5F5;
+  border: 1px solid #FED7D7;
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: #C53030;
   display: flex;
   align-items: center;
   gap: 10px;
   margin-top: 20px;
   animation: fadeIn 0.3s ease;
+  font-size: 0.9rem;
 }
 
 .error-icon {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
-/* Result Container */
+/* Contenedor de resultado minimalista */
 .result-container {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-radius: 16px;
-  padding: 25px;
-  margin-top: 25px;
-  animation: fadeIn 0.5s ease;
+  background: var(--jade-bg);
+  border: 1px solid var(--jade-sage);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+  animation: fadeIn 0.4s ease;
 }
 
 .result-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #333;
-  font-weight: 600;
+  color: var(--jade-dark);
+  font-weight: 400;
   margin-bottom: 20px;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
 }
 
 .result-icon {
-  color: #4caf50;
-  font-size: 1.3rem;
+  color: var(--jade-primary);
+  font-size: 1.2rem;
 }
 
 .result-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 15px;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
@@ -245,28 +257,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .amount-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #333;
+  font-size: 1.8rem;
+  font-weight: 300;
+  color: var(--jade-dark);
 }
 
 .amount-value.highlight {
-  color: #667eea;
+  color: var(--jade-primary);
+  font-weight: 400;
 }
 
 .currency-code {
-  font-size: 0.9rem;
-  color: #666;
-  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--jade-teal);
+  font-weight: 400;
+  letter-spacing: 0.5px;
 }
 
 .result-equals {
-  font-size: 1.5rem;
-  color: #999;
+  font-size: 1.3rem;
+  color: var(--jade-sage);
   font-weight: 300;
 }
 
@@ -274,85 +288,89 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 16px;
+  border-top: 1px solid var(--jade-sage);
 }
 
 .exchange-rate,
 .timestamp {
   display: flex;
   justify-content: space-between;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 .exchange-rate .label,
 .timestamp .label {
-  color: #666;
+  color: var(--jade-teal);
+  font-weight: 300;
 }
 
 .exchange-rate .value,
 .timestamp .value {
-  color: #333;
-  font-weight: 600;
+  color: var(--jade-dark);
+  font-weight: 400;
 }
 
-/* Info Box */
-.info-box {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 15px;
-  margin-top: 20px;
-  text-align: center;
-  color: white;
-  font-size: 0.9rem;
-}
-
-.info-box strong {
-  font-weight: 600;
-}
-
-/* Animations */
+/* Animación de entrada */
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Responsive */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive minimalista */
 @media (max-width: 768px) {
   .converter-card {
-    padding: 25px;
-  }
-
-  .card-header h2 {
-    font-size: 1.5rem;
-  }
-
-  .amount-input,
-  .currency-select {
-    padding: 12px 15px;
-    font-size: 1rem;
-  }
-
-  .convert-button {
-    padding: 15px;
-    font-size: 1rem;
-  }
-
-  .result-content {
-    flex-direction: column;
-    gap: 10px;
+    padding: 32px 24px;
   }
 
   .amount-value {
     font-size: 1.5rem;
   }
 
+  .result-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+
   .result-equals {
     transform: rotate(90deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .converter-card {
+    padding: 28px 20px;
+    border-radius: 12px;
+  }
+
+  .card-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .amount-input {
+    font-size: 1.1rem;
+    padding: 14px 16px;
+  }
+
+  .currency-select {
+    font-size: 0.95rem;
+    padding: 14px 16px;
   }
 }
