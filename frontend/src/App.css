@@ -1,12 +1,12 @@
-/* 🎨 Tema: Jade Pebble Morning - Diseño Minimalista */
+/* 🎨 Tema: Coca-Cola Classic - Diseño Minimalista */
 
 :root {
-  --jade-primary: #7B9669;
-  --jade-light: #E6E6E6;
-  --jade-sage: #BAC8B1;
-  --jade-teal: #6C8480;
-  --jade-dark: #404E3B;
-  --jade-bg: #F5F7F4;
+  --jade-primary: #F40009;
+  --jade-light: #F2D7D8;
+  --jade-sage: #F7B5B8;
+  --jade-teal: #A51C24;
+  --jade-dark: #2B2B2B;
+  --jade-bg: #FFF5F5;
 }
 
 * {

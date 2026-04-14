@@ -1,4 +1,4 @@
-/* 🎨 Conversor Minimalista - Jade Pebble Morning */
+/* 🎨 Conversor Minimalista - Coca-Cola Classic */
 
 .converter-container {
   width: 100%;
@@ -9,7 +9,7 @@
   background: white;
   border-radius: 16px;
   padding: 40px 35px;
-  box-shadow: 0 2px 20px rgba(64, 78, 59, 0.08);
+  box-shadow: 0 2px 20px rgba(244, 0, 9, 0.12);
   border: 1px solid var(--jade-light);
 }
 
@@ -79,7 +79,7 @@
 .amount-input:focus {
   outline: none;
   border-color: var(--jade-primary);
-  background: #FAFBFA;
+  background: #FFF0F1;
 }
 
 .currency-select {
@@ -98,7 +98,7 @@
 .currency-select:focus {
   outline: none;
   border-color: var(--jade-primary);
-  background: #FAFBFA;
+  background: #FFF0F1;
 }
 
 /* Botón de intercambio minimalista */
