@@ -62,6 +62,12 @@ Aplicación web full-stack para conversión de divisas en tiempo real con arquit
 
 ## 🔀 Workflow y CI/CD
 
+### Descripción de despliegue actual
+
+- Backend desplegado en **Render** (servicio web para la API FastAPI).
+- Frontend desplegado en **Netlify** (hosting/CDN para la app React).
+- Ambos servicios se actualizan automáticamente al recibir cambios desde GitHub según la configuración de cada plataforma.
+
 **Estrategia de Branching**:
 - `main` - Rama de producción (protegida)
 - `dev` - Rama de desarrollo (staging)
