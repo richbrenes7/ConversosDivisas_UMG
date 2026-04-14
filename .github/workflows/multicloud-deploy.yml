@@ -1,0 +1,223 @@
+name: Multicloud Deploy
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+    inputs:
+      target_cloud:
+        description: "Cloud target"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - aws
+          - azure
+          - gcp
+
+permissions:
+  contents: read
+
+env:
+  BACKEND_IMAGE_NAME: conversordivisas-backend
+  FRONTEND_IMAGE_NAME: conversordivisas-frontend
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  ci:
+    name: CI checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run backend tests
+        working-directory: backend
+        run: pytest -q
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+  deploy-aws:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    needs: ci
+    if: ${{ github.event_name == 'push' || github.event.inputs.target_cloud == 'all' || github.event.inputs.target_cloud == 'aws' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push backend image to ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_BACKEND }}
+        run: |
+          docker build -t "$REGISTRY/$REPOSITORY:${IMAGE_TAG}" backend
+          docker tag "$REGISTRY/$REPOSITORY:${IMAGE_TAG}" "$REGISTRY/$REPOSITORY:latest"
+          docker push "$REGISTRY/$REPOSITORY:${IMAGE_TAG}"
+          docker push "$REGISTRY/$REPOSITORY:latest"
+
+      - name: Build and push frontend image to ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_FRONTEND }}
+        run: |
+          docker build -t "$REGISTRY/$REPOSITORY:${IMAGE_TAG}" frontend
+          docker tag "$REGISTRY/$REPOSITORY:${IMAGE_TAG}" "$REGISTRY/$REPOSITORY:latest"
+          docker push "$REGISTRY/$REPOSITORY:${IMAGE_TAG}"
+          docker push "$REGISTRY/$REPOSITORY:latest"
+
+      - name: Run AWS deployment command
+        env:
+          AWS_DEPLOY_COMMAND: ${{ secrets.AWS_DEPLOY_COMMAND }}
+        run: |
+          if [ -z "$AWS_DEPLOY_COMMAND" ]; then
+            echo "Missing AWS_DEPLOY_COMMAND secret."
+            exit 1
+          fi
+          bash -lc "$AWS_DEPLOY_COMMAND"
+
+  deploy-azure:
+    name: Deploy to Azure
+    runs-on: ubuntu-latest
+    needs: ci
+    if: ${{ github.event_name == 'push' || github.event.inputs.target_cloud == 'all' || github.event.inputs.target_cloud == 'azure' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to ACR
+        env:
+          AZURE_ACR_NAME: ${{ secrets.AZURE_ACR_NAME }}
+        run: az acr login --name "$AZURE_ACR_NAME"
+
+      - name: Build and push backend image to ACR
+        env:
+          AZURE_ACR_NAME: ${{ secrets.AZURE_ACR_NAME }}
+          REPOSITORY: ${{ secrets.AZURE_ACR_REPOSITORY_BACKEND }}
+        run: |
+          IMAGE="${AZURE_ACR_NAME}.azurecr.io/$REPOSITORY:${IMAGE_TAG}"
+          docker build -t "$IMAGE" backend
+          docker tag "$IMAGE" "${AZURE_ACR_NAME}.azurecr.io/$REPOSITORY:latest"
+          docker push "$IMAGE"
+          docker push "${AZURE_ACR_NAME}.azurecr.io/$REPOSITORY:latest"
+
+      - name: Build and push frontend image to ACR
+        env:
+          AZURE_ACR_NAME: ${{ secrets.AZURE_ACR_NAME }}
+          REPOSITORY: ${{ secrets.AZURE_ACR_REPOSITORY_FRONTEND }}
+        run: |
+          IMAGE="${AZURE_ACR_NAME}.azurecr.io/$REPOSITORY:${IMAGE_TAG}"
+          docker build -t "$IMAGE" frontend
+          docker tag "$IMAGE" "${AZURE_ACR_NAME}.azurecr.io/$REPOSITORY:latest"
+          docker push "$IMAGE"
+          docker push "${AZURE_ACR_NAME}.azurecr.io/$REPOSITORY:latest"
+
+      - name: Run Azure deployment command
+        env:
+          AZURE_DEPLOY_COMMAND: ${{ secrets.AZURE_DEPLOY_COMMAND }}
+        run: |
+          if [ -z "$AZURE_DEPLOY_COMMAND" ]; then
+            echo "Missing AZURE_DEPLOY_COMMAND secret."
+            exit 1
+          fi
+          bash -lc "$AZURE_DEPLOY_COMMAND"
+
+  deploy-gcp:
+    name: Deploy to GCP
+    runs-on: ubuntu-latest
+    needs: ci
+    if: ${{ github.event_name == 'push' || github.event.inputs.target_cloud == 'all' || github.event.inputs.target_cloud == 'gcp' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker auth for Artifact Registry
+        env:
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build and push backend image to Artifact Registry
+        env:
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_ARTIFACT_REPOSITORY: ${{ secrets.GCP_ARTIFACT_REPOSITORY }}
+        run: |
+          IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${BACKEND_IMAGE_NAME}:${IMAGE_TAG}"
+          docker build -t "$IMAGE" backend
+          docker tag "$IMAGE" "${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${BACKEND_IMAGE_NAME}:latest"
+          docker push "$IMAGE"
+          docker push "${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${BACKEND_IMAGE_NAME}:latest"
+
+      - name: Build and push frontend image to Artifact Registry
+        env:
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_ARTIFACT_REPOSITORY: ${{ secrets.GCP_ARTIFACT_REPOSITORY }}
+        run: |
+          IMAGE="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${FRONTEND_IMAGE_NAME}:${IMAGE_TAG}"
+          docker build -t "$IMAGE" frontend
+          docker tag "$IMAGE" "${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${FRONTEND_IMAGE_NAME}:latest"
+          docker push "$IMAGE"
+          docker push "${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GCP_ARTIFACT_REPOSITORY}/${FRONTEND_IMAGE_NAME}:latest"
+
+      - name: Run GCP deployment command
+        env:
+          GCP_DEPLOY_COMMAND: ${{ secrets.GCP_DEPLOY_COMMAND }}
+        run: |
+          if [ -z "$GCP_DEPLOY_COMMAND" ]; then
+            echo "Missing GCP_DEPLOY_COMMAND secret."
+            exit 1
+          fi
+          bash -lc "$GCP_DEPLOY_COMMAND"
